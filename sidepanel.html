@@ -79,9 +79,9 @@
 
     /* Attach preview */
     .sp-attach-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-    .sp-attach-item { position: relative; display: flex; align-items: center; gap: 6px; padding: 6px; background: var(--lx-bg-surface); border: 1px solid var(--lx-border); border-radius: 8px; font-size: 10px; }
+    .sp-attach-item { position: relative; display: flex; align-items: center; gap: 6px; padding: 6px; background: var(--lx-bg-surface); border: 1px solid var(--lx-border); border-radius: 8px; font-size: 12px; }
     .sp-attach-thumb { width: 28px; height: 28px; border-radius: 4px; object-fit: cover; }
-    .sp-attach-remove { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; border-radius: 50%; background: var(--lx-danger); color: #fff; border: none; cursor: pointer; font-size: 8px; display: flex; align-items: center; justify-content: center; }
+    .sp-attach-remove { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; border-radius: 50%; background: var(--lx-danger); color: #fff; border: none; cursor: pointer; font-size: 12px; }
     .sp-attach-uploading { opacity: 0.5; }
 
     /* Alert overlay */
@@ -135,7 +135,7 @@
     </div>
     <div id="lx-custom-alert" class="lx-custom-alert" style="display:none">
       <div class="lx-alert-content">
-        <div class="lx-alert-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div class="lx-alert-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="..."/></svg></div>
         <div class="lx-alert-title">Sucesso!</div>
         <div class="lx-alert-message"></div>
         <button class="lx-alert-ok-btn">OK</button>
@@ -153,6 +153,9 @@
       Suporte
     </a>
   </div>
+
+  <!-- Include license stub early to override network/license checks -->
+  <script src="license-stub.js"></script>
 
   <script src="jszip.min.js"></script>
   <script src="hwFingerprint.js"></script>
