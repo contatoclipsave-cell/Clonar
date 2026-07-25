@@ -9,6 +9,57 @@
   <body>
     <div id="app"></div>
     <script src="jszip.min.js"></script>
+
+    <!-- Injection: remove/hide license UI and purchase links at runtime -->
+    <script>
+    (function(){
+      function textIncludes(el, txt){
+        return el && el.innerText && el.innerText.toLowerCase().indexOf(txt.toLowerCase()) !== -1;
+      }
+      function removeByTextSelectors(){
+        // Remove buttons/links/headers that reference license or purchase
+        document.querySelectorAll('button, a, h1, h2, p, span, div, small').forEach(function(el){
+          try{
+            var t = el.innerText || '';
+            if(!t) return;
+            var tl = t.toLowerCase();
+            if(tl.indexOf('ativar licença') !== -1 || tl.indexOf('validar licença') !== -1 || tl.indexOf('comprar licença') !== -1 || tl.indexOf('powered by lovex') !== -1 || tl.indexOf('dev. oppsevo') !== -1){
+              el.remove();
+            }
+          }catch(e){/* ignore */}
+        });
+        // Remove input placeholders that look like license keys
+        document.querySelectorAll('input, textarea').forEach(function(el){
+          try{
+            var ph = el.getAttribute && el.getAttribute('placeholder');
+            if(ph && ph.indexOf('LX-') === 0) el.remove();
+          }catch(e){}
+        });
+      }
+      // Also hide typical modal/root containers that may show activation flows
+      function hideModalContainers(){
+        ['.activation', '.lock', '.done-banner', '.prompt-wrap', '#license-modal', '.lic-box'].forEach(function(sel){
+          document.querySelectorAll(sel).forEach(function(n){ try{ n.style.display = 'none'; }catch(e){} });
+        });
+      }
+      function cleanAll(){ removeByTextSelectors(); hideModalContainers(); }
+      document.addEventListener('DOMContentLoaded', function(){
+        var tries = 0;
+        var iv = setInterval(function(){
+          cleanAll();
+          tries++;
+          if(tries>30) clearInterval(iv);
+        }, 300);
+        // final cleanup after a short delay in case app renders later
+        setTimeout(function(){ cleanAll(); }, 3000);
+      });
+      // If the app exposes a global validation function, try to stub it (best-effort)
+      try{
+        window.__disableLicenseValidation = true;
+      }catch(e){}
+    })();
+    </script>
+
     <script type="module" src="app.js"></script>
   </body>
 </html>
