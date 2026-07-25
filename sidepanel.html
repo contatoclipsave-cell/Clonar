@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoveX - Painel Lateral</title>
+  <link rel="stylesheet" href="floating.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--lx-bg);
+      color: var(--lx-text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #lx-floating {
+      position: static !important;
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      min-height: 100vh;
+    }
+    #lx-floating:hover { box-shadow: none !important; }
+    #lx-header { cursor: default !important; }
+    #lx-body { flex: 1; overflow-y: auto; }
+    .lx-resize-handle { display: none !important; }
+
+    /* Footer extra row for Modo Popup */
+    .sp-footer-extra {
+      padding: 6px 18px 10px;
+      border-top: 1px solid var(--lx-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--lx-bg);
+      flex-shrink: 0;
+    }
+    .sp-footer-extra button,
+    .sp-footer-extra a {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 8px;
+      border: 1px solid var(--lx-border);
+      background: rgba(255,255,255,0.03);
+      color: var(--lx-text-primary);
+      font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      text-decoration: none; font-family: inherit;
+    }
+    .sp-footer-extra button:hover,
+    .sp-footer-extra a:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: var(--lx-accent);
+    }
+    .sp-footer-extra a {
+      color: var(--lx-accent);
+      background: rgba(59,130,246,0.08);
+      border-color: rgba(59,130,246,0.15);
+    }
+
+    /* Light mode */
+    body.sp-light {
+      --lx-bg: #ffffff;
+      --lx-bg-elevated: #fafafa;
+      --lx-bg-surface: #f4f4f5;
+      --lx-bg-hover: #e4e4e7;
+      --lx-border: rgba(0,0,0,0.06);
+      --lx-border-hover: rgba(0,0,0,0.12);
+      --lx-text-primary: #18181b;
+      --lx-text-secondary: #52525b;
+      --lx-text-muted: #a1a1aa;
+      --lx-accent-subtle: rgba(59,130,246,0.06);
+      --lx-accent-glow: rgba(59,130,246,0.15);
+    }
+
+    /* Attach preview */
+    .sp-attach-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .sp-attach-item { position: relative; display: flex; align-items: center; gap: 6px; padding: 6px; background: var(--lx-bg-surface); border: 1px solid var(--lx-border); border-radius: 8px; font-size: 10px; }
+    .sp-attach-thumb { width: 28px; height: 28px; border-radius: 4px; object-fit: cover; }
+    .sp-attach-remove { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; border-radius: 50%; background: var(--lx-danger); color: #fff; border: none; cursor: pointer; font-size: 8px; display: flex; align-items: center; justify-content: center; }
+    .sp-attach-uploading { opacity: 0.5; }
+
+    /* Alert overlay */
+    .sp-alert-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sp-alert-box {
+      background: var(--lx-bg-elevated); border: 1px solid var(--lx-border);
+      border-radius: 16px; padding: 24px; max-width: 300px; width: 90%;
+      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .sp-alert-title { font-size: 15px; font-weight: 800; color: var(--lx-text-primary); margin-bottom: 8px; }
+    .sp-alert-message { font-size: 12px; color: var(--lx-text-secondary); margin-bottom: 16px; line-height: 1.5; }
+    .sp-alert-ok {
+      padding: 8px 24px; border: none; border-radius: 8px;
+      background: var(--lx-accent); color: #fff; font-weight: 700;
+      font-size: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .sp-alert-ok:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+    /* Log styles */
+    .sp-log { font-size: 12px; margin-top: 10px; min-height: 18px; text-align: center; font-weight: 600; }
+    .sp-log-success { color: var(--lx-success); }
+    .sp-log-error { color: var(--lx-danger); }
+    .sp-log-info { color: var(--lx-accent); }
+
+    /* Drag overlay */
+    .sp-drag-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(59,130,246,0.1); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; }
+    .sp-drag-overlay-inner { font-size: 16px; font-weight: 700; color: var(--lx-accent); background: var(--lx-bg-surface); padding: 20px 30px; border-radius: 14px; border: 2px dashed var(--lx-accent); }
+  </style>
+</head>
+<body>
+  <div id="lx-floating">
+    <div id="sp-header-container"></div>
+    <div id="lx-body">
+      <div style="padding:40px 0;text-align:center">
+        <p style="color:var(--lx-text-muted)">⏳ Carregando...</p>
+      </div>
+    </div>
+    <div id="lx-footer" class="lx-footer" style="display:none">
+      <div class="lx-footer-row">
+        <span class="lx-footer-status">LoveX 1.0 · Dev. OppsEvo</span>
+        <span class="lx-footer-version">v2.0.0</span>
+      </div>
+    </div>
+    <div id="lx-notif-panel" class="lx-notif-panel" style="display:none">
+      <div class="lx-notif-header"><span>Notificações</span><button id="lx-notif-close" class="lx-notif-close-btn">✕</button></div>
+      <div id="lx-notif-list" class="lx-notif-list"><p class="lx-notif-empty">Carregando...</p></div>
+    </div>
+    <div id="lx-custom-alert" class="lx-custom-alert" style="display:none">
+      <div class="lx-alert-content">
+        <div class="lx-alert-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div class="lx-alert-title">Sucesso!</div>
+        <div class="lx-alert-message"></div>
+        <button class="lx-alert-ok-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sp-footer-extra">
+    <button id="sp-back-to-popup">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Modo Popup
+    </button>
+    <a href="https://wa.me/5517981513711" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      Suporte
+    </a>
+  </div>
+
+  <script src="jszip.min.js"></script>
+  <script src="hwFingerprint.js"></script>
+  <script src="sidepanel-bundle.js"></script>
+</body>
+</html>
